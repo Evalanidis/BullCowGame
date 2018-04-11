@@ -3,7 +3,7 @@
 
 The game was created as a part of a Udemy Course,
 
-[The Unreal Engine Developer Course - Learn C++ & Make Games ](https://www.udemy.com/unrealcourse/) by @GameDev.tv
+[The Unreal Engine Developer Course - Learn C++ & Make Games ](https://www.udemy.com/unrealcourse/) by @BenTristem @GameDev.tv
 
 I added some additional functions as to make the game more intresting.
 
