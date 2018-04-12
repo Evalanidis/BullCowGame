@@ -70,7 +70,6 @@ private:
 	int32 LengthOfDictionary;
 	int32 NumberOfRemainingWords;
 	Vector<FString> Dictionary;
-	TMap<FString, bool> WordSeen;
 	TMap<char, bool> HintLetterCheckMap;
 	bool bGameIsWon;
 	bool IsIsogram(FString) const;
