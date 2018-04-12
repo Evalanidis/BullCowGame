@@ -57,7 +57,6 @@ public:
 	void SetScore(int32);
 	int32 GetScore() const;
 	FString GetHiddenWord();
-	void SetRemainingWords(int32);
 	int32 GetRemainingWords() const;
 	bool CheckRemainingWords() const;
 
