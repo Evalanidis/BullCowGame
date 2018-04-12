@@ -22,8 +22,13 @@ inline IntType randint(IntType a, IntType b)
 
 //to make syntax Unreal friendly
 using int32 = int;
+// default constructor
 
-FBullCowGame::FBullCowGame() { CreateDictionary(); } // default constructor
+FBullCowGame::FBullCowGame() 
+{
+	CreateDictionary();
+	TotalHints = 3;
+} 
 
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
@@ -31,7 +36,7 @@ bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
 void FBullCowGame::SetScore(int32 score) { ScoreResult = score; }
 int32 FBullCowGame::GetScore() const { return ScoreResult; }
 FString FBullCowGame::GetHiddenWord() { return MyHiddenWord; }
-void FBullCowGame::SetTotalHints(int32 num) { TotalHints = num; }
+//void FBullCowGame::SetTotalHints(int32 num) { TotalHints = num; }
 int32 FBullCowGame::GetTotalHints() const { return TotalHints; }
 int32 FBullCowGame::GetNumberOfWords() const { return NumberOfWords; }
 int32 FBullCowGame::GetRemainingWords() const { return Dictionary.size(); }
@@ -45,15 +50,9 @@ int32 FBullCowGame::GetMaxTries() const
 
 void FBullCowGame::Reset() 
 {
-	do {
-
-		LengthOfDictionary = Dictionary.size();
-		MyHiddenWord = Dictionary[randint(0, LengthOfDictionary)];
-
-	}while (WordSeen[MyHiddenWord]);
-
+	LengthOfDictionary = Dictionary.size();
+	MyHiddenWord = Dictionary[randint(0, LengthOfDictionary)];
 	Dictionary.erase(std::remove(Dictionary.begin(), Dictionary.end(), MyHiddenWord), Dictionary.end());
-	WordSeen[MyHiddenWord] = true;
 	TotalHints = GetTotalHints();
 	MyCurrentTry = 1;
 	bGameIsWon = false;

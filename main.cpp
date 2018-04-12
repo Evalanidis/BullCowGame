@@ -26,8 +26,7 @@ FBullCowGame BCGame; // instantiate a new game, which we re-use accross plays
 //the entry point for our application
 int main() 
 {
-	
-	BCGame.SetTotalHints(3);
+	//BCGame.SetTotalHints(3);
 	BCGame.SetScore(0);
 	
 	do
