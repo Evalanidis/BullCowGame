@@ -34,7 +34,6 @@ FString FBullCowGame::GetHiddenWord() { return MyHiddenWord; }
 void FBullCowGame::SetTotalHints(int32 num) { TotalHints = num; }
 int32 FBullCowGame::GetTotalHints() const { return TotalHints; }
 int32 FBullCowGame::GetNumberOfWords() const { return NumberOfWords; }
-void FBullCowGame::SetRemainingWords(int32 num) { NumberOfRemainingWords = num; }
 int32 FBullCowGame::GetRemainingWords() const { return Dictionary.size(); }
 bool FBullCowGame::CheckRemainingWords() const { return GetRemainingWords() == 0; }
 
