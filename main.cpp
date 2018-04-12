@@ -26,9 +26,8 @@ FBullCowGame BCGame; // instantiate a new game, which we re-use accross plays
 //the entry point for our application
 int main() 
 {
-	BCGame.SetNumberOfWords(0);
-	BCGame.CreateDictionary();
-	BCGame.SetRemainingWords(BCGame.GetNumberOfWords());
+	
+	BCGame.SetTotalHints(3);
 	BCGame.SetScore(0);
 	
 	do
@@ -36,7 +35,6 @@ int main()
 		BCGame.Reset();
 		PrintIntro();
 		PlayGame();
-		BCGame.SetRemainingWords(BCGame.GetRemainingWords() - 1);
 	} 
 	while (!BCGame.CheckRemainingWords() && AskToPlayAgain());
 	
@@ -65,7 +63,7 @@ void PrintIntro()
 // Plays a single game to completion
 void PlayGame()
 {
-	//BCGame.Reset();
+
 	int32 MaxTries = BCGame.GetMaxTries();
 	FText Guess ="";
 	// loop asking for guess while the game 
@@ -115,7 +113,7 @@ FText GetValidGuess()
 			std::cout << "Unknown Error!";
 			break;
 		default:
-			// assume gues is valid
+			// assume guess is valid
 			break;
 		}
 		

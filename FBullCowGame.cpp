@@ -3,31 +3,40 @@
 #include <fstream>
 #include <iostream>
 #include <ctime>
+#include <random>
+#include <type_traits>
+#include <algorithm>
+
+inline std::default_random_engine& randint_engine()
+{
+	static thread_local std::default_random_engine eng{ std::random_device{}() };
+	return eng;
+}
+template<typename IntType>
+inline IntType randint(IntType a, IntType b)
+{
+	static_assert(std::is_integral<IntType>::value, "argument must be an integer type");
+	using dist_t = std::uniform_int_distribution<IntType>;
+	return dist_t(a, b)(randint_engine());
+}
 
 //to make syntax Unreal friendly
 using int32 = int;
-TMap<FString, bool> WordSeen;
-TMap<char, bool> HintLetterCheckMap;
 
-int32 LengthOfDictionary;
-int32 RemainingWords;
-int32 TotalHints = 3;
-
-//FBullCowGame::FBullCowGame() { Reset(); } // default constructor
-FBullCowGame::FBullCowGame() { CreateDictionary(); }
+FBullCowGame::FBullCowGame() { CreateDictionary(); } // default constructor
 
 int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
 bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
-void FBullCowGame::SetScore(int32 score) { this->ScoreResult = score; }
+void FBullCowGame::SetScore(int32 score) { ScoreResult = score; }
 int32 FBullCowGame::GetScore() const { return ScoreResult; }
-FString FBullCowGame::GetHiddenWord() {return MyHiddenWord;}
+FString FBullCowGame::GetHiddenWord() { return MyHiddenWord; }
+void FBullCowGame::SetTotalHints(int32 num) { TotalHints = num; }
 int32 FBullCowGame::GetTotalHints() const { return TotalHints; }
-void FBullCowGame::SetNumberOfWords(int32 i) { NumberOfWords = i; }
 int32 FBullCowGame::GetNumberOfWords() const { return NumberOfWords; }
-void FBullCowGame::SetRemainingWords(int32 num) { NumberOfRemainingWords = num; }
-int32 FBullCowGame::GetRemainingWords() const { return NumberOfRemainingWords; }
+int32 FBullCowGame::GetRemainingWords() const { return Dictionary.size(); }
 bool FBullCowGame::CheckRemainingWords() const { return GetRemainingWords() == 0; }
+
 int32 FBullCowGame::GetMaxTries() const 
 { 
 	TMap<int32, int32> WordLengthToMaxTries{ {3,4},{4,7},{5,10},{6,15},{7,20}};
@@ -37,22 +46,24 @@ int32 FBullCowGame::GetMaxTries() const
 void FBullCowGame::Reset() 
 {
 	do {
-		LengthOfDictionary = GetNumberOfWords();
-		srand(time(NULL));
-		MyHiddenWord = Dictionary[rand() % LengthOfDictionary];
-	} while (WordSeen[MyHiddenWord]);
+
+		LengthOfDictionary = Dictionary.size();
+		MyHiddenWord = Dictionary[randint(0, LengthOfDictionary)];
+
+	}while (WordSeen[MyHiddenWord]);
+
+	Dictionary.erase(std::remove(Dictionary.begin(), Dictionary.end(), MyHiddenWord), Dictionary.end());
 	WordSeen[MyHiddenWord] = true;
-	
+	TotalHints = GetTotalHints();
 	MyCurrentTry = 1;
 	bGameIsWon = false;
+
 	if (!HintLetterCheckMap.empty())
 	{
 		HintLetterCheckMap.clear();
 	}
 	return;
 }
-
-
 
 EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 {
@@ -85,25 +96,26 @@ void FBullCowGame::CreateDictionary()
 {
 	std::ifstream inFile;
 	FString word;
-	int32 i = 0;
 	inFile.open("WordDictionary.txt");
 	if (!inFile) 
 	{
 		std::cerr << "Unable to open file WordDictionary.txt";
 		exit(1);   // call system to stop
 	}
-	while(inFile >>word) {
-		Dictionary[i] = word;
-		i++;
+
+	while(inFile >>word) 
+	{
+		Dictionary.push_back(word);
 	}
+
 	inFile.close();
-	SetNumberOfWords(i);
 	return;
 }
 
-char FBullCowGame::ShowLetterHint() const
+char FBullCowGame::ShowLetterHint()
 {
-	char hint = MyHiddenWord[rand() % MyHiddenWord.length()];
+	int32 LenghtOfWord = MyHiddenWord.length();
+	char hint = MyHiddenWord[randint(0, LenghtOfWord)];
 	if (TotalHints > 0 )
 	{
 		// makes sure to not show a previous hint letter again
@@ -114,10 +126,10 @@ char FBullCowGame::ShowLetterHint() const
 				HintLetterCheckMap[hint] = true;
 				TotalHints--;
 				return hint;
-			} 
+			}  
 			else 
 			{
-				hint = MyHiddenWord[rand() % MyHiddenWord.length()];
+				hint = MyHiddenWord[randint(0, LenghtOfWord)];
 			}
 		} while (true);
 	}
