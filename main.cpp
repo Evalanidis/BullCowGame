@@ -35,7 +35,6 @@ int main()
 		BCGame.Reset();
 		PrintIntro();
 		PlayGame();
-		BCGame.SetRemainingWords(BCGame.GetRemainingWords() - 1);
 	} 
 	while (!BCGame.CheckRemainingWords() && AskToPlayAgain());
 	
